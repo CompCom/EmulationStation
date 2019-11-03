@@ -4,9 +4,11 @@
 #include "guis/GuiMsgBox.h"
 #include "views/UIModeController.h"
 #include "views/ViewController.h"
+#include "AudioManager.h"
 #include "Log.h"
 #include "Settings.h"
 #include "SystemData.h"
+#include "ThemeData.h"
 #include "Window.h"
 
 // buffer values for scrolling velocity (left, stopped, right)

@@ -11,6 +11,7 @@
 #include "views/gamelist/VideoGameListView.h"
 #include "views/SystemView.h"
 #include "views/UIModeController.h"
+#include "AudioManager.h"
 #include "FileFilterIndex.h"
 #include "Log.h"
 #include "Settings.h"
@@ -103,7 +104,9 @@ void ViewController::goToNextGameList()
 	assert(mState.viewing == GAME_LIST);
 	SystemData* system = getState().getSystem();
 	assert(system);
-	goToGameList(system->getNext());
+	auto next = system->getNext();
+	AudioManager::getInstance()->startMusic(next->getTheme());
+	goToGameList(next);
 }
 
 void ViewController::goToPrevGameList()
@@ -111,7 +114,9 @@ void ViewController::goToPrevGameList()
 	assert(mState.viewing == GAME_LIST);
 	SystemData* system = getState().getSystem();
 	assert(system);
-	goToGameList(system->getPrev());
+	auto prev = system->getPrev();
+	AudioManager::getInstance()->startMusic(prev->getTheme());
+	goToGameList(prev);
 }
 
 void ViewController::goToGameList(SystemData* system)

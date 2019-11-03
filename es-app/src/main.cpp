@@ -6,6 +6,7 @@
 #include "utils/FileSystemUtil.h"
 #include "views/ViewController.h"
 #include "CollectionSystemManager.h"
+#include "AudioManager.h"
 #include "EmulationStation.h"
 #include "InputManager.h"
 #include "Log.h"
@@ -363,6 +364,9 @@ int main(int argc, char* argv[])
 	//dont generate joystick events while we're loading (hopefully fixes "automatically started emulator" bug)
 	SDL_JoystickEventState(SDL_DISABLE);
 
+        // Initialize audio manager
+        AudioManager::getInstance()->init();
+        
 	// preload what we can right away instead of waiting for the user to select it
 	// this makes for no delays when accessing content, but a longer startup time
 	ViewController::get()->preload();
