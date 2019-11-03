@@ -105,7 +105,7 @@ void ViewController::goToNextGameList()
 	SystemData* system = getState().getSystem();
 	assert(system);
 	auto next = system->getNext();
-	AudioManager::getInstance()->startMusic(next->getTheme());
+	AudioManager::getInstance()->themeChanged(next->getTheme());
 	goToGameList(next);
 }
 
@@ -115,7 +115,7 @@ void ViewController::goToPrevGameList()
 	SystemData* system = getState().getSystem();
 	assert(system);
 	auto prev = system->getPrev();
-	AudioManager::getInstance()->startMusic(prev->getTheme());
+	AudioManager::getInstance()->themeChanged(prev->getTheme());
 	goToGameList(prev);
 }
 

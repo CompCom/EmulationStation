@@ -14,7 +14,7 @@ std::shared_ptr<Music> Music::get(const std::string& path)
 		return it->second;
 	std::shared_ptr<Music> music = std::shared_ptr<Music>(new Music(path));
 	sMap[path] = music;
-        AudioManager::getInstance()->registerMusic(music);
+	AudioManager::getInstance()->registerMusic(music);
 
 	return music;
 }
@@ -52,39 +52,39 @@ void Music::initMusic()
 		return;
 
 	//load wav file via SDL
-        Mix_Music *gMusic = NULL;
-        gMusic = Mix_LoadMUS( mPath.c_str() );
-        if(gMusic == NULL){
-            LOG(LogError) << "Error loading sound \"" << mPath << "\"!\n" << "	" << SDL_GetError();
-            return;
-        }else {
-            music = gMusic;
-        }
+	Mix_Music *gMusic = NULL;
+	gMusic = Mix_LoadMUS( mPath.c_str() );
+	if(gMusic == NULL){
+		LOG(LogError) << "Error loading sound \"" << mPath << "\"!\n" << "	" << SDL_GetError();
+		return;
+	}else {
+		music = gMusic;
+	}
 }
 
 void Music::deinitMusic()
 {
 	playing = false;
-        if(music != NULL){
-            Mix_FreeMusic( music );
-            music = NULL;
-        }
+	if(music != NULL){
+		Mix_FreeMusic( music );
+		music = NULL;
+	}
 }
 
-void Music::play()
+void Music::play(bool repeat, void (* callback)())
 {
-
-        if(music == NULL)
-		return;
-	if(!Settings::getInstance()->getBool("EnableSounds"))
+	if(music == NULL)
 		return;
 	if (!playing)
 	{
 		playing = true;
 	}
-        LOG(LogError) << "playing";
-        if(Mix_FadeInMusic(music, -1, 1000) == -1){
-            printf("Mix_PlayMusic: %s\n", Mix_GetError());
-        }else {
-        }
+	LOG(LogInfo) << "playing";
+	if(Mix_FadeInMusic(music, repeat ? -1 : 1, 1000) == -1){
+	LOG(LogInfo) << "Mix_PlayMusic: " << Mix_GetError();
+		return;
+	}
+	if(!repeat){
+		Mix_HookMusicFinished(callback);
+	}
 }

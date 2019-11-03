@@ -30,6 +30,7 @@
 
 bool scrape_cmdline = false;
 
+void playSound(std::string name);
 bool parseArgs(int argc, char* argv[])
 {
 	Utils::FileSystem::setExePath(argv[0]);
@@ -333,6 +334,10 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	// Initialize audio manager
+	AudioManager::getInstance()->init();
+
+	playSound("loading");
 	const char* errorMsg = NULL;
 	if(!loadSystemConfigFile(&errorMsg))
 	{
@@ -364,8 +369,6 @@ int main(int argc, char* argv[])
 	//dont generate joystick events while we're loading (hopefully fixes "automatically started emulator" bug)
 	SDL_JoystickEventState(SDL_DISABLE);
 
-        // Initialize audio manager
-        AudioManager::getInstance()->init();
         
 	// preload what we can right away instead of waiting for the user to select it
 	// this makes for no delays when accessing content, but a longer startup time
@@ -463,4 +466,12 @@ int main(int argc, char* argv[])
 	LOG(LogInfo) << "EmulationStation cleanly shutting down.";
 
 	return 0;
+}
+
+void playSound(std::string name) {
+	std::string selectedTheme = Settings::getInstance()->getString("ThemeSet");
+	std::string loadingMusic = Utils::FileSystem::getHomePath()+"/.emulationstation/themes/"+selectedTheme+"/music/"+name+".ogg";
+	if(Utils::FileSystem::exists(loadingMusic)){
+		Music::get(loadingMusic)->play(false, NULL);
+	}
 }

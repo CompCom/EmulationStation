@@ -297,6 +297,7 @@ void FileData::launchGame(Window* window)
 
 	window->init();
 	VolumeControl::getInstance()->init();
+	AudioManager::getInstance()->resumeMusic();
 	window->normalizeNextUpdate();
 
 	//update number of times the game has been launched
