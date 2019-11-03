@@ -91,15 +91,17 @@ void GuiMenu::openSoundSettings()
 {
 	auto s = new GuiSettings(mWindow, "SOUND SETTINGS");
 
+#ifndef PSC_BUILD
 	// volume
 	auto volume = std::make_shared<SliderComponent>(mWindow, 0.f, 100.f, 1.f, "%");
 	volume->setValue((float)VolumeControl::getInstance()->getVolume());
 	s->addWithLabel("SYSTEM VOLUME", volume);
 	s->addSaveFunc([volume] { VolumeControl::getInstance()->setVolume((int)Math::round(volume->getValue())); });
+#endif // PSC_BUILD
 
 	if (UIModeController::getInstance()->isUIModeFull())
 	{
-#if defined(__linux__)
+#if defined(__linux__) && !defined(PSC_BUILD)
 		// audio card
 		auto audio_card = std::make_shared< OptionListComponent<std::string> >(mWindow, "AUDIO CARD", false);
 		std::vector<std::string> audio_cards;
@@ -380,6 +382,7 @@ void GuiMenu::openOtherSettings()
 	s->addWithLabel("VRAM LIMIT", max_vram);
 	s->addSaveFunc([max_vram] { Settings::getInstance()->setInt("MaxVRAM", (int)Math::round(max_vram->getValue())); });
 
+#ifndef PSC_BUILD
 	// power saver
 	auto power_saver = std::make_shared< OptionListComponent<std::string> >(mWindow, "POWER SAVER MODES", false);
 	std::vector<std::string> modes;
@@ -399,6 +402,7 @@ void GuiMenu::openOtherSettings()
 		Settings::getInstance()->setString("PowerSaverMode", power_saver->getSelected());
 		PowerSaver::init();
 	});
+#endif // PSC_BUILD
 
 	// gamelists
 	auto save_gamelists = std::make_shared<SwitchComponent>(mWindow);
@@ -473,6 +477,7 @@ void GuiMenu::openQuitMenu()
 	ComponentListRow row;
 	if (UIModeController::getInstance()->isUIModeFull())
 	{
+#ifndef PSC_BUILD
 		row.makeAcceptInputHandler([window] {
 			window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
 				[] {
@@ -483,6 +488,7 @@ void GuiMenu::openQuitMenu()
 		});
 		row.addElement(std::make_shared<TextComponent>(window, "RESTART EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
 		s->addRow(row);
+#endif // PSC_BUILD
 
 
 
@@ -501,6 +507,7 @@ void GuiMenu::openQuitMenu()
 		}
 	}
 	row.elements.clear();
+#ifndef PSC_BUILD
 	row.makeAcceptInputHandler([window] {
 		window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
 			[] {
@@ -512,6 +519,7 @@ void GuiMenu::openQuitMenu()
 	});
 	row.addElement(std::make_shared<TextComponent>(window, "RESTART SYSTEM", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
 	s->addRow(row);
+#endif // PSC_BUILD
 
 	row.elements.clear();
 	row.makeAcceptInputHandler([window] {

@@ -10,6 +10,7 @@
 #include "guis/GuiGameScraper.h"
 #include "guis/GuiMsgBox.h"
 #include "guis/GuiTextEditPopup.h"
+#include "guis/GuiTextEditPopupKeyboard.h"
 #include "resources/Font.h"
 #include "utils/StringUtil.h"
 #include "views/ViewController.h"
@@ -91,7 +92,11 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 				row.addElement(ed, false);
 
 				auto spacer = std::make_shared<GuiComponent>(mWindow);
+#ifdef PSC_BUILD
+				spacer->setSize(Renderer::getScreenWidth() * 0.025f, 0);
+#else
 				spacer->setSize(Renderer::getScreenWidth() * 0.0025f, 0);
+#endif
 				row.addElement(spacer, false);
 
 				// pass input to the actual DateTimeEditComponent instead of the spacer
@@ -125,7 +130,11 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 				const std::string title = iter->displayPrompt;
 				auto updateVal = [ed](const std::string& newVal) { ed->setValue(newVal); }; // ok callback (apply new value to ed)
 				row.makeAcceptInputHandler([this, title, ed, updateVal, multiLine] {
+#ifdef PSC_BUILD
+					mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, title, ed->getValue(), updateVal, multiLine));
+#else
 					mWindow->pushGui(new GuiTextEditPopup(mWindow, title, ed->getValue(), updateVal, multiLine));
+#endif
 				});
 				break;
 			}

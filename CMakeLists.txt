@@ -84,6 +84,13 @@ if(DEFINED libCEC_FOUND)
     add_definitions(-DHAVE_LIBCEC)
 endif()
 
+option( PSC_COMPILE "Add PSC optimization options" NO )
+
+if ( PSC_COMPILE )
+	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -marm -mcpu=cortex-a35 -mtune=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -DPSC_BUILD" )
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -marm -mcpu=cortex-a35 -mtune=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -DPSC_BUILD" )
+endif()
+
 #-------------------------------------------------------------------------------
 
 if(MSVC)

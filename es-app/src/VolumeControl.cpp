@@ -82,7 +82,7 @@ void VolumeControl::init()
 	//initialize audio mixer interface
 #if defined (__APPLE__)
 	#error TODO: Not implemented for MacOS yet!!!
-#elif defined(__linux__)
+#elif defined(__linux__) && !defined(PSC_BUILD)
 	//try to open mixer device
 	if (mixerHandle == nullptr)
 	{

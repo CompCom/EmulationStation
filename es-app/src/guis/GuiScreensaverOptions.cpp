@@ -1,6 +1,7 @@
 #include "guis/GuiScreensaverOptions.h"
 
 #include "guis/GuiTextEditPopup.h"
+#include "guis/GuiTextEditPopupKeyboard.h"
 #include "views/ViewController.h"
 #include "Settings.h"
 #include "SystemData.h"
@@ -88,9 +89,15 @@ void GuiScreensaverOptions::addEditableTextComponent(ComponentListRow row, const
 	row.addElement(bracket, false);
 
 	auto updateVal = [ed](const std::string& newVal) { ed->setValue(newVal); }; // ok callback (apply new value to ed)
+#ifdef PSC_BUILD
+	row.makeAcceptInputHandler([this, label, ed, updateVal] {
+		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, label, ed->getValue(), updateVal, false));
+	});
+#else
 	row.makeAcceptInputHandler([this, label, ed, updateVal] {
 		mWindow->pushGui(new GuiTextEditPopup(mWindow, label, ed->getValue(), updateVal, false));
 	});
+#endif
 	assert(ed);
 	addRow(row);
 	ed->setValue(value);

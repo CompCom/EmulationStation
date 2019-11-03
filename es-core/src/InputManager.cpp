@@ -249,7 +249,18 @@ bool InputManager::parseEvent(const SDL_Event& ev, Window* window)
 		if(ev.key.repeat)
 			return false;
 
+#ifdef PSC_BUILD
+		if(ev.key.keysym.scancode == SDL_SCANCODE_SLEEP)
+		{
+			Scripting::fireEvent("quit", "shutdown");
+			Scripting::fireEvent("shutdown");
+			if (quitES(QuitMode::SHUTDOWN) != 0)
+				LOG(LogWarning) << "Shutdown terminated with non-zero result!";
+		}
+		else if(ev.key.keysym.sym == SDLK_F4 || ev.key.keysym.scancode == SDL_SCANCODE_AUDIOPLAY)
+#else
 		if(ev.key.keysym.sym == SDLK_F4)
+#endif // PSC_BUILD
 		{
 			SDL_Event* quit = new SDL_Event();
 			quit->type = SDL_QUIT;

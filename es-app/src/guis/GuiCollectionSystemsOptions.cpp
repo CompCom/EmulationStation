@@ -4,6 +4,7 @@
 #include "components/SwitchComponent.h"
 #include "guis/GuiSettings.h"
 #include "guis/GuiTextEditPopup.h"
+#include "guis/GuiTextEditPopupKeyboard.h"
 #include "utils/StringUtil.h"
 #include "views/ViewController.h"
 #include "CollectionSystemManager.h"
@@ -61,9 +62,15 @@ void GuiCollectionSystemsOptions::initializeMenu()
 		window->removeGui(topGui);
 		createCollection(name);
 	};
+#ifdef PSC_BUILD
+	row.makeAcceptInputHandler([this, createCustomCollection] {
+		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, "New Collection Name", "", createCustomCollection, false));
+	});
+#else
 	row.makeAcceptInputHandler([this, createCustomCollection] {
 		mWindow->pushGui(new GuiTextEditPopup(mWindow, "New Collection Name", "", createCustomCollection, false));
 	});
+#endif
 
 	mMenu.addRow(row);
 

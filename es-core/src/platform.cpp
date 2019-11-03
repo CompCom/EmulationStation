@@ -14,6 +14,8 @@ int runShutdownCommand()
 {
 #ifdef WIN32 // windows
 	return system("shutdown -s -t 0");
+#elif defined(PSC_BUILD)
+    return system("echo -ne quit > /tmp/launchfilecommand");
 #else // osx / linux
 	return system("sudo shutdown -h now");
 #endif

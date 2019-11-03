@@ -58,6 +58,13 @@ HttpReq::HttpReq(const std::string& url)
 		return;
 	}
 
+#ifdef PSC_BUILD
+	//Disable HTTPS verification for PSC builds
+	curl_easy_setopt(mHandle, CURLOPT_SSL_VERIFYPEER, 0);
+	curl_easy_setopt(mHandle, CURLOPT_SSL_VERIFYHOST, 0);
+	curl_easy_setopt(mHandle, CURLOPT_FOLLOWLOCATION, 1);
+#endif
+
 	//set curl to handle redirects
 	err = curl_easy_setopt(mHandle, CURLOPT_FOLLOWLOCATION, 1L);
 	if(err != CURLE_OK)
