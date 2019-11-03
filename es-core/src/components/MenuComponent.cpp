@@ -124,6 +124,49 @@ std::shared_ptr<ComponentGrid> makeButtonGrid(Window* window, const std::vector<
 	return buttonGrid;
 }
 
+/**
+ * Limitation: same number of button per line, same dimension per cell
+ */
+
+std::shared_ptr<ComponentGrid> makeMultiDimButtonGrid(Window* window, const std::vector< std::vector< std::shared_ptr<ButtonComponent> > >& buttons, const float outerWidth, const float outerHeight)
+{
+
+	const int sizeX = (int) buttons.at(0).size();
+	const int sizeY = (int) buttons.size();
+	const float buttonHeight = buttons.at(0).at(0)->getSize().y();
+	const float gridHeight = (buttonHeight + BUTTON_GRID_VERT_PADDING + 2) * sizeY;
+
+	float horizPadding = (float) BUTTON_GRID_HORIZ_PADDING;
+	float gridWidth, buttonWidth;
+
+	do
+	{
+		gridWidth = outerWidth - horizPadding; // to get centered because size * (button size + BUTTON_GRID_VERT_PADDING) let a half BUTTON_GRID_VERT_PADDING left / right marge
+		buttonWidth = (gridWidth / sizeX) - horizPadding;
+		horizPadding -= 2;
+	} while ((buttonWidth < 100) && (horizPadding > 2));
+
+
+	std::shared_ptr<ComponentGrid> grid = std::make_shared<ComponentGrid>(window, Vector2i(sizeX, sizeY));
+
+	grid->setSize(gridWidth, gridHeight < outerHeight ? gridHeight : outerHeight);
+
+	for (int x = 0; x < sizeX; x++)
+		grid->setColWidthPerc(x, (float) 1 / sizeX);
+
+	for (int y = 0; y < sizeY; y++)
+	{
+		for (int x = 0; x < sizeX; x++)
+		{
+			const std::shared_ptr<ButtonComponent>& button = buttons.at(y).at(x);
+			button->setSize(buttonWidth, buttonHeight);
+			grid->setEntry(button, Vector2i(x, y), true, false);
+		}
+	}
+
+	return grid;
+}
+
 std::shared_ptr<ImageComponent> makeArrow(Window* window)
 {
 	auto bracket = std::make_shared<ImageComponent>(window);

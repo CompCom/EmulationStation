@@ -12,6 +12,7 @@ class ButtonComponent;
 class ImageComponent;
 
 std::shared_ptr<ComponentGrid> makeButtonGrid(Window* window, const std::vector< std::shared_ptr<ButtonComponent> >& buttons);
+std::shared_ptr<ComponentGrid> makeMultiDimButtonGrid(Window* window, const std::vector< std::vector< std::shared_ptr<ButtonComponent> > >& buttons, const float outerWidth, const float outerHeight);
 std::shared_ptr<ImageComponent> makeArrow(Window* window);
 
 #define TITLE_VERT_PADDING (Renderer::getScreenHeight()*0.0637f)

@@ -3,15 +3,16 @@
 #include "resources/Font.h"
 #include "utils/StringUtil.h"
 
-ButtonComponent::ButtonComponent(Window* window, const std::string& text, const std::string& helpText, const std::function<void()>& func) : GuiComponent(window),
+ButtonComponent::ButtonComponent(Window* window, const std::string& text, const std::string& helpText, const std::function<void()>& func, bool upperCase) : GuiComponent(window),
 	mBox(window, ":/button.png"),
 	mFont(Font::get(FONT_SIZE_MEDIUM)),
 	mFocused(false),
 	mEnabled(true),
+	mNewColor(false),
 	mTextColorFocused(0xFFFFFFFF), mTextColorUnfocused(0x777777FF)
 {
 	setPressedFunc(func);
-	setText(text, helpText);
+	setText(text, helpText, upperCase);
 	updateImage();
 }
 
@@ -37,17 +38,39 @@ bool ButtonComponent::input(InputConfig* config, Input input)
 	return GuiComponent::input(config, input);
 }
 
-void ButtonComponent::setText(const std::string& text, const std::string& helpText)
+void ButtonComponent::setText(const std::string& text, const std::string& helpText, bool upperCase, bool resize, bool doUpdateHelpPrompts)
 {
-	mText = Utils::String::toUpper(text);
+	mText = (upperCase) ? Utils::String::toUpper(text) : text;
 	mHelpText = helpText;
 
 	mTextCache = std::unique_ptr<TextCache>(mFont->buildTextCache(mText, 0, 0, getCurTextColor()));
 
-	float minWidth = mFont->sizeText("DELETE").x() + 12;
-	setSize(Math::max(mTextCache->metrics.size.x() + 12, minWidth), mTextCache->metrics.size.y());
+	if(resize)
+	{
+		float minWidth = mFont->sizeText("DELETE").x() + 12;
+		setSize(Math::max(mTextCache->metrics.size.x() + 12, minWidth), mTextCache->metrics.size.y());
+	}
 
-	updateHelpPrompts();
+	if (doUpdateHelpPrompts)
+		updateHelpPrompts();
+}
+
+void ButtonComponent::autoSizeFont()
+{
+	if (mFont->sizeText(mText).x() + 6 > getSize().x()) {
+		mFont = Font::get(FONT_SIZE_SMALL);
+		onSizeChanged();
+	}
+	if (mFont->sizeText(mText).x() + 6 > getSize().x()) {
+		mFont = Font::get(FONT_SIZE_MINI);
+		onSizeChanged();
+	}
+}
+
+bool ButtonComponent::isTextOverlapping()
+{
+	// + 2 to keep a small space between text and border
+	return mFont->sizeText(mText).x() + 2  > getSize().x();
 }
 
 void ButtonComponent::onFocusGained()
@@ -75,6 +98,14 @@ void ButtonComponent::updateImage()
 		mBox.setImagePath(":/button_filled.png");
 		mBox.setCenterColor(0x770000FF);
 		mBox.setEdgeColor(0x770000FF);
+		return;
+	}
+
+	// If a new color has been set.  
+	if (mNewColor) {
+		mBox.setImagePath(":/button_filled.png");
+		mBox.setCenterColor(mModdedColor);
+		mBox.setEdgeColor(mModdedColor);
 		return;
 	}
 
