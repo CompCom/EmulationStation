@@ -70,13 +70,13 @@ namespace Renderer
 	void        drawRect        (const int   _x, const int   _y, const int   _w, const int   _h, const unsigned int _color, const Blend::Factor _srcBlendFactor = Blend::SRC_ALPHA, const Blend::Factor _dstBlendFactor = Blend::ONE_MINUS_SRC_ALPHA);
 
 	SDL_Window* getSDLWindow    ();
-	int         getWindowWidth  ();
-	int         getWindowHeight ();
-	int         getScreenWidth  ();
-	int         getScreenHeight ();
-	int         getScreenOffsetX();
-	int         getScreenOffsetY();
-	int         getScreenRotate ();
+	const int&  getWindowWidth  ();
+	const int&  getWindowHeight ();
+	const int&  getScreenWidth  ();
+	const int&  getScreenHeight ();
+	const int&  getScreenOffsetX();
+	const int&  getScreenOffsetY();
+	const int&  getScreenRotate ();
 
 	// API specific
 	unsigned int convertColor      (const unsigned int _color);

@@ -14,6 +14,7 @@ namespace Renderer
 {
 	static std::stack<Rect> clipStack;
 	static SDL_Window*      sdlWindow          = nullptr;
+#ifndef USE_WAYLANDGLES
 	static int              windowWidth        = 0;
 	static int              windowHeight       = 0;
 	static int              screenWidth        = 0;
@@ -22,6 +23,15 @@ namespace Renderer
 	static int              screenOffsetY      = 0;
 	static int              screenRotate       = 0;
 	static bool             initialCursorState = 1;
+#else
+	static const int&       windowWidth        = getWindowWidth();
+	static const int&       windowHeight       = getWindowHeight();
+	static const int&       screenWidth        = getScreenWidth();
+	static const int&       screenHeight       = getScreenHeight();
+	static const int&       screenOffsetX      = getScreenOffsetX();
+	static const int&       screenOffsetY      = getScreenOffsetY();
+	static const int&       screenRotate       = getScreenRotate();
+#endif
 
 	static void setIcon()
 	{
@@ -57,6 +67,7 @@ namespace Renderer
 
 	} // setIcon
 
+#ifndef USE_WAYLANDGLES
 	static bool createWindow()
 	{
 		LOG(LogInfo) << "Creating window...";
@@ -111,7 +122,19 @@ namespace Renderer
 		SDL_Quit();
 
 	} // destroyWindow
+#else
+	bool createWindowWayland();
+	void destroyWindowWayland();
+	static bool createWindow()
+	{
+		return createWindowWayland();
+	}
 
+	static void destroyWindow()
+	{
+		destroyWindowWayland();
+	}
+#endif
 	bool init()
 	{
 		if(!createWindow())
@@ -258,12 +281,14 @@ namespace Renderer
 	} // drawRect
 
 	SDL_Window* getSDLWindow()     { return sdlWindow; }
-	int         getWindowWidth()   { return windowWidth; }
-	int         getWindowHeight()  { return windowHeight; }
-	int         getScreenWidth()   { return screenWidth; }
-	int         getScreenHeight()  { return screenHeight; }
-	int         getScreenOffsetX() { return screenOffsetX; }
-	int         getScreenOffsetY() { return screenOffsetY; }
-	int         getScreenRotate()  { return screenRotate; }
+#ifndef USE_WAYLANDGLES
+	const int&  getWindowWidth()   { return windowWidth; }
+	const int&  getWindowHeight()  { return windowHeight; }
+	const int&  getScreenWidth()   { return screenWidth; }
+	const int&  getScreenHeight()  { return screenHeight; }
+	const int&  getScreenOffsetX() { return screenOffsetX; }
+	const int&  getScreenOffsetY() { return screenOffsetY; }
+	const int&  getScreenRotate()  { return screenRotate; }
+#endif
 
 } // Renderer::

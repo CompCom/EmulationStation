@@ -44,7 +44,7 @@ else()
     set(GLSystem "Desktop OpenGL" CACHE STRING "The OpenGL system to be used")
 endif(GLES)
 
-set_property(CACHE GLSystem PROPERTY STRINGS "Desktop OpenGL" "Embedded OpenGL")
+set_property(CACHE GLSystem PROPERTY STRINGS "Desktop OpenGL" "Embedded OpenGL" "Wayland GLES")
 
 #finding necessary packages
 #-------------------------------------------------------------------------------
@@ -52,6 +52,9 @@ if(${GLSystem} MATCHES "Desktop OpenGL")
     find_package(OpenGL REQUIRED)
 else()
     find_package(OpenGLES REQUIRED)
+    if(${GLSystem} MATCHES "Wayland GLES")
+      find_package(Wayland COMPONENTS Client Egl REQUIRED)
+    endif()
 endif()
 find_package(Freetype REQUIRED)
 find_package(FreeImage REQUIRED)
@@ -111,7 +114,11 @@ endif()
 if(${GLSystem} MATCHES "Desktop OpenGL")
     add_definitions(-DUSE_OPENGL_21)
 else()
-    add_definitions(-DUSE_OPENGLES_10)
+    if(${GLSystem} MATCHES "Embedded OpenGL")
+      add_definitions(-DUSE_OPENGLES_10)
+    else()
+      add_definitions(-DUSE_WAYLANDGLES)
+    endif()
 endif()
 
 #-------------------------------------------------------------------------------
@@ -123,6 +130,7 @@ set(COMMON_INCLUDE_DIRS
     ${CURL_INCLUDE_DIR}
     ${VLC_INCLUDE_DIR}
     ${RAPIDJSON_INCLUDE_DIRS}
+    ${WAYLAND_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/external
     ${CMAKE_CURRENT_SOURCE_DIR}/es-core/src
 )
@@ -234,6 +242,12 @@ else()
             ${OPENGLES_LIBRARIES}
         )
     endif()
+endif()
+
+if(${GLSystem} MATCHES "Wayland GLES")
+    LIST(APPEND COMMON_LIBRARIES
+        ${WAYLAND_LIBRARIES}
+    )
 endif()
 
 #-------------------------------------------------------------------------------
