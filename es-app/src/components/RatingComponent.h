@@ -4,6 +4,7 @@
 
 #include "renderers/Renderer.h"
 #include "GuiComponent.h"
+#include "components/ImageComponent.h"
 
 class TextureResource;
 
@@ -37,17 +38,9 @@ public:
 	virtual std::vector<HelpPrompt> getHelpPrompts() override;
 
 private:
-	void updateVertices();
-	void updateColors();
-
 	float mValue;
-
-	Renderer::Vertex mVertices[8];
-
-	unsigned int mColorShift;
-
-	std::shared_ptr<TextureResource> mFilledTexture;
-	std::shared_ptr<TextureResource> mUnfilledTexture;
+	ImageComponent starFilled;
+	ImageComponent starUnfilled;
 };
 
 #endif // ES_APP_COMPONENTS_RATING_COMPONENT_H
