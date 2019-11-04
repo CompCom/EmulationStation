@@ -61,7 +61,6 @@ void SliderComponent::update(int deltaTime)
 void SliderComponent::render(const Transform4x4f& parentTrans)
 {
 	Transform4x4f trans = parentTrans * getTransform();
-	trans.round();
 	Renderer::setMatrix(trans);
 
 	// render suffix
@@ -72,7 +71,7 @@ void SliderComponent::render(const Transform4x4f& parentTrans)
 
 	//render line
 	const float lineWidth = 2;
-	Renderer::drawRect(mKnob.getSize().x() / 2, mSize.y() / 2 - lineWidth / 2, width, lineWidth, 0x777777FF);
+	Renderer::drawRect(mKnob.getSize().x() / 2, mSize.y() / 2 - lineWidth / 2, width, lineWidth, 0x777777FF, 0x777777FF);
 
 	//render knob
 	mKnob.render(trans);

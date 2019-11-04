@@ -1,6 +1,7 @@
 #if defined(USE_OPENGLES_10)
 
 #include "renderers/Renderer.h"
+#include "math/Transform4x4f.h"
 #include "Log.h"
 #include "Settings.h"
 
@@ -104,7 +105,7 @@ namespace Renderer
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _linear ? GL_LINEAR : GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _linear ? GL_LINEAR : GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -193,8 +194,10 @@ namespace Renderer
 
 	void setMatrix(const Transform4x4f& _matrix)
 	{
+		Transform4x4f matrix = _matrix;
+		matrix.round();
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf((GLfloat*)&_matrix);
+		glLoadMatrixf((GLfloat*)&matrix);
 
 	} // setMatrix
 
