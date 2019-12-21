@@ -62,7 +62,7 @@ void GuiCollectionSystemsOptions::initializeMenu()
 		window->removeGui(topGui);
 		createCollection(name);
 	};
-#ifdef PSC_BUILD
+#ifdef CLASSIC_CONSOLE
 	row.makeAcceptInputHandler([this, createCustomCollection] {
 		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, "New Collection Name", "", createCustomCollection, false));
 	});

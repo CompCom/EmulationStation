@@ -89,7 +89,7 @@ void GuiScreensaverOptions::addEditableTextComponent(ComponentListRow row, const
 	row.addElement(bracket, false);
 
 	auto updateVal = [ed](const std::string& newVal) { ed->setValue(newVal); }; // ok callback (apply new value to ed)
-#ifdef PSC_BUILD
+#ifdef CLASSIC_CONSOLE
 	row.makeAcceptInputHandler([this, label, ed, updateVal] {
 		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, label, ed->getValue(), updateVal, false));
 	});
