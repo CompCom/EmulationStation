@@ -382,7 +382,7 @@ void GuiMenu::openOtherSettings()
 	s->addWithLabel("VRAM LIMIT", max_vram);
 	s->addSaveFunc([max_vram] { Settings::getInstance()->setInt("MaxVRAM", (int)Math::round(max_vram->getValue())); });
 
-#ifndef PSC_BUILD
+#ifndef CLASSIC_CONSOLE
 	// power saver
 	auto power_saver = std::make_shared< OptionListComponent<std::string> >(mWindow, "POWER SAVER MODES", false);
 	std::vector<std::string> modes;
@@ -402,7 +402,7 @@ void GuiMenu::openOtherSettings()
 		Settings::getInstance()->setString("PowerSaverMode", power_saver->getSelected());
 		PowerSaver::init();
 	});
-#endif // PSC_BUILD
+#endif // CLASSIC_CONSOLE
 
 	// gamelists
 	auto save_gamelists = std::make_shared<SwitchComponent>(mWindow);
@@ -477,7 +477,7 @@ void GuiMenu::openQuitMenu()
 	ComponentListRow row;
 	if (UIModeController::getInstance()->isUIModeFull())
 	{
-#ifndef PSC_BUILD
+#ifndef CLASSIC_CONSOLE
 		row.makeAcceptInputHandler([window] {
 			window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
 				[] {
@@ -488,7 +488,7 @@ void GuiMenu::openQuitMenu()
 		});
 		row.addElement(std::make_shared<TextComponent>(window, "RESTART EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
 		s->addRow(row);
-#endif // PSC_BUILD
+#endif // CLASSIC_CONSOLE
 
 
 

@@ -16,6 +16,8 @@ int runShutdownCommand()
 	return system("shutdown -s -t 0");
 #elif defined(PSC_BUILD)
     return system("echo -ne quit > /tmp/launchfilecommand");
+#elif defined(SEGA_BUILD)
+    return 0;
 #else // osx / linux
 	return system("sudo shutdown -h now");
 #endif
@@ -25,6 +27,8 @@ int runRestartCommand()
 {
 #ifdef WIN32 // windows
 	return system("shutdown -r -t 0");
+#elif defined(SEGA_BUILD)
+    return 0;
 #else // osx / linux
 	return system("sudo shutdown -r now");
 #endif
