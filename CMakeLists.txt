@@ -263,8 +263,8 @@ endif()
 #-------------------------------------------------------------------------------
 # set up build directories
 set(dir ${CMAKE_CURRENT_SOURCE_DIR})
-set(EXECUTABLE_OUTPUT_PATH ${dir} CACHE PATH "Build directory" FORCE)
-set(LIBRARY_OUTPUT_PATH ${dir} CACHE PATH "Build directory" FORCE)
+set(EXECUTABLE_OUTPUT_PATH ${dir} CACHE PATH "Build directory")
+set(LIBRARY_OUTPUT_PATH ${dir} CACHE PATH "Build directory")
 
 
 #-------------------------------------------------------------------------------
