@@ -92,8 +92,8 @@ endif()
 option( PSC_COMPILE "Add PSC optimization options" NO )
 
 if ( PSC_COMPILE )
-	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -marm -mcpu=cortex-a35 -mtune=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -DPSC_BUILD" )
-	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -marm -mcpu=cortex-a35 -mtune=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -DPSC_BUILD" )
+	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -marm -mcpu=cortex-a35 -mtune=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -DPSC_BUILD -DCLASSIC_CONSOLE" )
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -marm -mcpu=cortex-a35 -mtune=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -DPSC_BUILD -DCLASSIC_CONSOLE" )
 endif()
 
 #-------------------------------------------------------------------------------
@@ -268,8 +268,8 @@ endif()
 #-------------------------------------------------------------------------------
 # set up build directories
 set(dir ${CMAKE_CURRENT_SOURCE_DIR})
-set(EXECUTABLE_OUTPUT_PATH ${dir} CACHE PATH "Build directory" FORCE)
-set(LIBRARY_OUTPUT_PATH ${dir} CACHE PATH "Build directory" FORCE)
+set(EXECUTABLE_OUTPUT_PATH ${dir} CACHE PATH "Build directory")
+set(LIBRARY_OUTPUT_PATH ${dir} CACHE PATH "Build directory")
 
 
 #-------------------------------------------------------------------------------
