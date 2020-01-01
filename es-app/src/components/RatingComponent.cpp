@@ -3,14 +3,13 @@
 #include "resources/TextureResource.h"
 #include "ThemeData.h"
 
-RatingComponent::RatingComponent(Window* window) : GuiComponent(window), mColorShift(0xFFFFFFFF)
+RatingComponent::RatingComponent(Window* window) : GuiComponent(window), starFilled(window), starUnfilled(window)
 {
-	mFilledTexture = TextureResource::get(":/star_filled.svg", true);
-	mUnfilledTexture = TextureResource::get(":/star_unfilled.svg", true);
+	starFilled.setImage(":/star_filled.svg");
+	starUnfilled.setImage(":/star_unfilled.svg");
 	mValue = 0.5f;
-	mSize = Vector2f(64 * NUM_RATING_STARS, 64);
-	updateVertices();
-	updateColors();
+	starFilled.setResize(64,64);
+	starUnfilled.setResize(64,64);
 }
 
 void RatingComponent::setValue(const std::string& value)
@@ -25,8 +24,6 @@ void RatingComponent::setValue(const std::string& value)
 		else if(mValue < 0.0f)
 			mValue = 0.0f;
 	}
-
-	updateVertices();
 }
 
 std::string RatingComponent::getValue() const
@@ -40,18 +37,14 @@ std::string RatingComponent::getValue() const
 
 void RatingComponent::setOpacity(unsigned char opacity)
 {
-	mOpacity = opacity;
-	mColorShift = (mColorShift >> 8 << 8) | mOpacity;
-	updateColors();
+	starFilled.setOpacity(opacity);
+	starUnfilled.setOpacity(opacity);
 }
 
 void RatingComponent::setColorShift(unsigned int color)
 {
-	mColorShift = color;
-	// Grab the opacity from the color shift because we may need to apply it if
-	// fading textures in
-	mOpacity = color & 0xff;
-	updateColors();
+	starFilled.setColorShift(color);
+	starUnfilled.setColorShift(color);
 }
 
 void RatingComponent::onSizeChanged()
@@ -64,53 +57,26 @@ void RatingComponent::onSizeChanged()
 	if(mSize.y() > 0)
 	{
 		size_t heightPx = (size_t)Math::round(mSize.y());
-		if (mFilledTexture)
-			mFilledTexture->rasterizeAt(heightPx, heightPx);
-		if(mUnfilledTexture)
-			mUnfilledTexture->rasterizeAt(heightPx, heightPx);
+		starFilled.setResize(heightPx, heightPx);
+		starUnfilled.setResize(heightPx, heightPx);
 	}
-
-	updateVertices();
-}
-
-void RatingComponent::updateVertices()
-{
-	const float        numStars = NUM_RATING_STARS;
-	const float        h        = Math::round(getSize().y()); // is the same as a single star's width
-	const float        w        = Math::round(h * mValue * numStars);
-	const float        fw       = Math::round(h * numStars);
-	const unsigned int color    = Renderer::convertColor(mColorShift);
-
-	mVertices[0] = { { 0.0f, 0.0f }, { 0.0f,              1.0f }, color };
-	mVertices[1] = { { 0.0f, h    }, { 0.0f,              0.0f }, color };
-	mVertices[2] = { { w,    0.0f }, { mValue * numStars, 1.0f }, color };
-	mVertices[3] = { { w,    h    }, { mValue * numStars, 0.0f }, color };
-
-	mVertices[4] = { { 0.0f, 0.0f }, { 0.0f,              1.0f }, color };
-	mVertices[5] = { { 0.0f, h    }, { 0.0f,              0.0f }, color };
-	mVertices[6] = { { fw,   0.0f }, { numStars,          1.0f }, color };
-	mVertices[7] = { { fw,   h    }, { numStars,          0.0f }, color };
-}
-
-void RatingComponent::updateColors()
-{
-	const unsigned int color = Renderer::convertColor(mColorShift);
-
-	for(int i = 0; i < 8; ++i)
-		mVertices[i].col = color;
 }
 
 void RatingComponent::render(const Transform4x4f& parentTrans)
 {
+	if (!isVisible())
+		return;
+
 	Transform4x4f trans = parentTrans * getTransform();
 	trans.round();
-	Renderer::setMatrix(trans);
-
-	mFilledTexture->bind();
-	Renderer::drawTriangleStrips(&mVertices[0], 4);
-
-	mUnfilledTexture->bind();
-	Renderer::drawTriangleStrips(&mVertices[4], 4);
+	
+	for(int i = 0, starCount=mValue*NUM_RATING_STARS; i < NUM_RATING_STARS; ++i)
+	{
+		if(i < starCount)
+			starFilled.render(trans);
+		starUnfilled.render(trans);
+		trans.translate(Vector3f(starFilled.getSize().x(), 0.f, 0.f));
+	}
 
 	renderChildren(trans);
 }
@@ -122,8 +88,6 @@ bool RatingComponent::input(InputConfig* config, Input input)
 		mValue += 1.f / NUM_RATING_STARS;
 		if(mValue > 1.0f)
 			mValue = 0.0f;
-
-		updateVertices();
 	}
 
 	return GuiComponent::input(config, input);
@@ -142,12 +106,12 @@ void RatingComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const 
 	bool imgChanged = false;
 	if(properties & PATH && elem->has("filledPath"))
 	{
-		mFilledTexture = TextureResource::get(elem->get<std::string>("filledPath"), true);
+		starFilled.setImage(elem->get<std::string>("filledPath"));
 		imgChanged = true;
 	}
 	if(properties & PATH && elem->has("unfilledPath"))
 	{
-		mUnfilledTexture = TextureResource::get(elem->get<std::string>("unfilledPath"), true);
+		starUnfilled.setImage(elem->get<std::string>("unfilledPath"));
 		imgChanged = true;
 	}
 
